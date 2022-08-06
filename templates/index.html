@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+index
+{% endblock %}
+
+
+{% block content %}
+<h1>Hello</h1>
+<h2>my name is {{ name }}</h2>
+<p>
+    {{ stuff |title |safe }}
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla sapiente excepturi ea voluptatibus sunt. Praesentium
+    eveniet officiis ad amet at dolores, nulla ipsam excepturi sunt sed quibusdam modi dignissimos sequi?
+</p>
+<ul>
+
+    {% for pizza in pizzas %}
+    <li>{{pizza}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,21 @@
+html {
+    font-size: 24px;
+}
+
+body {
+    margin: 0;
+}
+
+.red {
+    color: red
+}
+
+
+.main {
+    max-width: 500px;
+    height: 100vh;
+    background-color: #eecca8;
+    margin: 0 auto;
+    padding: 20px 40px;
+
+}
