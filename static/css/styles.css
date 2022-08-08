@@ -1,21 +1,19 @@
-html {
-    font-size: 24px;
+h1,
+h2 {
+    color: darkblue;
 }
 
-body {
-    margin: 0;
+.img {
+    border-radius: 15px;
 }
-
-.red {
-    color: red
-}
-
 
 .main {
-    max-width: 500px;
-    height: 100vh;
-    background-color: #eecca8;
+    max-width: 90vw;
     margin: 0 auto;
     padding: 20px 40px;
+}
 
+#demo {
+    color: #fbed7a;
+    filter: drop-shadow(2px 2px 1px rgb(60, 26, 126));
 }

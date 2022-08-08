@@ -1,0 +1,10 @@
+flask
+gunicorn
+python-dotenv
+cryptography
+Flask-SQLAlchemy
+email-validator
+Flask-WTF
+mysql-connector-python
+SQLAlchemy
+PyMySQl

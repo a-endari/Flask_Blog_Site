@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% if name %}
+{{name}}'s welcome page
+{% else %}
+Enter your name!
+{% endif %}
+
+{% endblock %}
+
+
+{% block content %}
+<br />
+{% for message in get_flashed_messages() %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% endfor %}
+
+
+{% if name %}
+<h1>Hello {{name}}!</h1>
+<br>
+<img class='img img-fluid' src="{{ url_for('static', filename='images/sunset.jpg') }}" alt="a nice red sunset">
+<br>
+<br>
+<p id="demo">This is stuff...</p>
+
+<script src="{{ url_for('static', filename='js/myfile.js') }}"></script>
+
+
+
+{% else %}
+<br>
+<form action="" method="post">
+    <div class="mb-3">
+        {{ form.hidden_tag() }}
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-control") }}
+        <br />
+        {{ form.submit(class="btn btn-secondary") }}
+    </div>
+</form>
+{% endif %}
+{% endblock %}

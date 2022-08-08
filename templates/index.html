@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block title %}
-index
+My Notes
 {% endblock %}
 
 
 {% block content %}
-<h1>Hello</h1>
-<h2>my name is {{ name }}</h2>
+<h1>Hello,</h1>
+<h2>My name is {{ name | title }}</h2>
 <p>
     {{ stuff |title |safe }}
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla sapiente excepturi ea voluptatibus sunt. Praesentium
