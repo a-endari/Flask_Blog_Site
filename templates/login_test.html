@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Login
+
+{% endblock %}
+
+
+{% block content %}
+
+<br />
+{% for message in get_flashed_messages() %}
+
+{% if message == '6'%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Incorrect password!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '7' %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Email not in database!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+
+{% endif %}
+{% endfor %}
+
+{% if logged %}
+<h1> Weclome Dear {{user.name}}</h1>
+
+{% else %}
+<h1>Enter Your creditentials</h1><br>
+
+
+<form action="{{url_for('login')}}" method="POST">
+    <div class="mb-3">
+        {{ form.hidden_tag() }}
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control") }}
+        <br />
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+        <br />
+        <div class="text-end">{{ form.submit(class="btn btn-primary") }}</div>
+    </div>
+</form>
+{% endif %}
+
+
+{% endblock %}

@@ -1,8 +1,3 @@
-h1,
-h2 {
-    color: darkblue;
-}
-
 .img {
     border-radius: 15px;
 }
@@ -13,6 +8,8 @@ h2 {
     padding: 20px 40px;
 }
 
+
+/* This is for the javascript demo code! */
 #demo {
     color: #fbed7a;
     filter: drop-shadow(2px 2px 1px rgb(60, 26, 126));

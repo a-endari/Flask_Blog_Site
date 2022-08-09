@@ -34,8 +34,14 @@ Enter your name!
 </div>
 
 {% elif message == '4'%}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
+<div class="alert alert-success alert-dismissible fade show" role="alert">
     Sorry! Something Went Wrong!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '5'%}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    User successfully deleted.
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
@@ -57,6 +63,16 @@ Enter your name!
     <div class="">
         {{ form.email.label(class="form-label")+ ' Address:' }}
         {{ form.email(class="form-control", placeholder="name@example.com") }}
+    </div>
+    <br>
+    <div class="mb-3">
+        {{ form.password.label(class="form-label")+ ':' }}
+        {{ form.password(class="form-control") }}
+    </div>
+    <br />
+    <div class="mb-3">
+        {{ form.password2.label(class="form-label")+ ':' }}
+        {{ form.password2(class="form-control") }}
     </div>
     <br />
     <div class=" text-end">
@@ -82,9 +98,11 @@ Enter your name!
                     <thead>
                         <tr>
                             <th scope="col">ID</th>
-                            <th scope="col">Full Name</th>
-                            <th scope="col">Email Address</th>
-                            <th scope="col">Edit</th>
+                            <th class="text-center" scope="col">Full Name</th>
+                            <th class="text-center" scope="col">Email Address</th>
+                            <th class="text-center" scope="col">Pass</th>
+                            <th class="text-center" scope="col">Delete</th>
+                            <th class="text-center" scope="col">Edit</th>
                         </tr>
                     </thead>
                     {% for user in our_users %}
@@ -97,6 +115,13 @@ Enter your name!
                         </td>
                         <td class="text-center">
                             {{ user.email }}
+                        </td>
+                        <td class="text-center">
+                            {{ user.password_hash }}
+                        </td>
+
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-danger" href="{{url_for('delete_user', id=user.id)}}">Delete</a>
                         </td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-secondary" href="{{url_for('update_user', id=user.id)}}">Edit</a>

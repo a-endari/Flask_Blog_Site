@@ -47,8 +47,18 @@ Update user info
         {{ form.email.label(class="form-label")+ ' Address:' }}
         {{ form.email(class="form-control", placeholder="name@example.com", value=user.email) }}
     </div>
+    <br>
+    <div class="mb-3">
+        {{ 'New ' + form.password.label(class="form-label")+ ':' }}
+        {{ form.password(class="form-control") }}
+    </div>
     <br />
+    <div class="mb-3">
+        {{ form.password2.label(class="form-label")+ ':' }}
+        {{ form.password2(class="form-control") }}
+    </div>
     <div class=" text-end">
+        <a class="btn btn btn-danger" href="{{url_for('delete_user', id=user.id)}}">Delete</a>
         {{ form.submit(class="btn btn-primary") }}
     </div>
     </div>
