@@ -11,16 +11,19 @@
 </head>
 
 <body>
+
     <Header>
         {% include 'navbar.html' %}
     </Header>
+
     <main class="main">
+        <br />
+        {% include 'warnings.html' %}
         {% block content %}
         {% endblock %}
-
     </main>
-    <script src="{{url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
 
+    <script src="{{url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
 </body>
 
 </html>

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+🐤BlogBird
+
+{% endblock %}
+
+
+{%block content%}
+
+<br>
+
+{% for post in posts %}
+
+
+<div class="card text-bg-light mb-3 mx-auto" style="max-width: 75vw;">
+    <div class="card-header">
+        This is a 🐤BlogBird Post
+    </div>
+    <div class="card-body">
+        <h6 class="card-title">
+            By: {{ post.title }}
+        </h6>
+        <p class="card-text">
+            {{ post.content |truncate(300, True) }}
+        </p>
+    </div>
+    <div class="card-footer">
+        <small class="text-muted">
+            Author: {{post.author}}
+        </small>
+        <small class="text-muted">
+            Date: {{post.date_posted.strftime("%Y-%m-%d")}}
+        </small>
+    </div>
+</div>
+<br>
+{% endfor %}
+{% endblock %}

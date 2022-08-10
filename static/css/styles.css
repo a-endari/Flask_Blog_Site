@@ -8,6 +8,10 @@
     padding: 20px 40px;
 }
 
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+}
 
 /* This is for the javascript demo code! */
 #demo {

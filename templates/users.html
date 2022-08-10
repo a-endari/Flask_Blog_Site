@@ -12,45 +12,7 @@ Enter your name!
 
 
 {% block content %}
-<br />
-{% for message in get_flashed_messages() %}
 
-{% if message == '1'%}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    This email address already exist!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-{% elif message == '2' %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    User successfully added!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-{% elif message == '3' %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    User info updated successfully!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-{% elif message == '4'%}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    Sorry! Something Went Wrong!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-{% elif message == '5'%}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    User successfully deleted.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-{% endif %}
-
-{% endfor %}
-
-
-<br>
 
 <form class="shadow p-3 mb-5 bg-body rounded" action="" method="post">
     <h3>Enter your info:</h3>

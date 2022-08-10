@@ -1,0 +1,61 @@
+{% for message in get_flashed_messages() %}
+
+
+{% if message == '1'%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    User's email is already in databas!, Use another Email!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '2' %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    User successfully added!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '3' %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    User info updated successfully!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '4'%}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    Sorry! Something Went Wrong!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '5'%}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    User successfully deleted.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '6'%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Incorrect password!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '7' %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Email not in database!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '10'%}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    Blog posted successfully.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+
+{% else %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<br>
+
+{% endif %}
+{% endfor %}

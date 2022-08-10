@@ -1,7 +1,9 @@
+from email.policy import default
 import os
 from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import (
+    TextAreaField,
     StringField,
     SubmitField,
     EmailField,
@@ -9,7 +11,7 @@ from wtforms import (
     BooleanField,
     ValidationError,
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime, date
@@ -66,6 +68,24 @@ class Users(db.Model):
         return check_password_hash(self.password_hash, password)
 
 
+# Create Blog Post Model
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(
+        db.String(255),
+    )
+    author = db.Column(
+        db.String(255),
+    )
+    slug = db.Column(
+        db.String(255),
+    )
+    content = db.Column(
+        db.Text,
+    )
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 # Create a Form class for Database
 class UserForm(FlaskForm):
 
@@ -100,6 +120,44 @@ class UserForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
+# Create a Form class for PostForm Page
+class PostForm(FlaskForm):
+    """
+    PostForm a model for post form
+    """
+
+    title = StringField(
+        "Title",
+        validators=[
+            DataRequired("enter your name"),
+        ],
+    )
+
+    author = StringField(
+        "Author",
+        validators=[
+            DataRequired(),
+        ],
+    )
+
+    content = TextAreaField(
+        "Content",
+        validators=[
+            DataRequired(),
+        ],
+    )
+
+    slug = StringField(
+        "Slug",
+        validators=[
+            DataRequired(),
+        ],
+    )
+
+    submit = SubmitField("Submit")
+
+
+# Create a Form class For Login
 class LoginForm(FlaskForm):
 
     password = PasswordField(
@@ -137,6 +195,15 @@ def index():
     name = "abbas endari"
     stuff = "this is <strong> Bold text </strong>"
     return render_template("index.html", name=name, stuff=stuff, pizzas=favorite_pizzas)
+
+
+# blog post route - all blogs
+@app.route("/posts/")
+def posts():
+    posts = Posts.query.order_by(
+        Posts.date_posted.desc()
+    )  # .desc() at the end is just like .title() added to a string!! it only reversez the order.
+    return render_template("posts.html", posts=posts)
 
 
 # how to return JSON with flask! (Usually Used with APIs)
@@ -219,6 +286,29 @@ def update_user(id):
 @app.route("/user/<name>")
 def user(name):
     return render_template("user.html", name=name)
+
+
+# add-post page route
+@app.route("/add-post/", methods=["GET", "POST"])
+def add_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Posts(
+            title=request.form.get("title"),
+            author=request.form.get("author"),
+            content=request.form.get("content"),
+            slug=request.form.get("slug"),
+        )
+        # add post data to database
+        db.session.add(post)
+        db.session.commit()
+
+        form.title.data = ""
+        form.author.data = ""
+        form.content.data = ""
+        form.slug.data = ""
+        flash("10")  # Blog post submitted successfully
+    return render_template("add_post.html", form=form)
 
 
 # create Custom Erroe Pages
