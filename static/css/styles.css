@@ -8,9 +8,10 @@
     padding: 20px 40px;
 }
 
-.card-footer {
+.abbas-spaced {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 /* This is for the javascript demo code! */

@@ -2,7 +2,7 @@
 
 {% block title %}
 
-🐤BlogBird
+🐤BlogBird - {{post.title}}
 
 {% endblock %}
 
@@ -11,22 +11,20 @@
 
 <br>
 
-{% for post in posts %}
 
-
-<div class="card shadow-lg text-bg-light mb-3 mx-auto" style="max-width: 75vw;">
+<div class="card  shadow-lg text-bg-light mb-3 mx-auto" style="max-width: 85vw;">
     <div class="card-header  abbas-spaced">
         <span>This is a 🐤BlogBird Post</span>
-        <a class="btn btn-sm btn-secondary" href="{{url_for('post', author=post.author, slug=post.slug)}}">
-            Read full Post
+        <a class="btn btn-sm btn-secondary" href="{{url_for('posts')}}">
+            Back to all posts
         </a>
     </div>
     <div class="card-body">
         <h6 class="card-title">
-            {{post.title }}
+            {{ post.title }}
         </h6>
         <p class="card-text">
-            {{ post.content |truncate(300, True) }}
+            {{ post.content}}
         </p>
     </div>
     <div class="card-footer abbas-spaced">
@@ -36,8 +34,10 @@
         <small class="text-muted">
             Date: {{post.date_posted.strftime("%Y-%m-%d")}}
         </small>
+        <a class="btn btn-outline-dark" href="#">
+            Go to Top
+        </a>
     </div>
 </div>
 <br>
-{% endfor %}
 {% endblock %}

@@ -1,6 +1,5 @@
-from email.policy import default
 import os
-from flask import Flask, render_template, flash, request, redirect, url_for
+from flask import Flask, render_template, flash, request, redirect, url_for, abort
 from flask_wtf import FlaskForm
 from wtforms import (
     TextAreaField,
@@ -204,6 +203,15 @@ def posts():
         Posts.date_posted.desc()
     )  # .desc() at the end is just like .title() added to a string!! it only reversez the order.
     return render_template("posts.html", posts=posts)
+
+
+# route for a specific blog post
+@app.route("/<string:author>/<string:slug>")
+def post(author, slug):
+    post = Posts.query.filter_by(slug=slug, author=author).first()
+    if post:
+        return render_template("post.html", post=post)
+    return abort(404)
 
 
 # how to return JSON with flask! (Usually Used with APIs)

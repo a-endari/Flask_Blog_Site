@@ -8,3 +8,4 @@ Flask-WTF
 mysql-connector-python
 SQLAlchemy
 PyMySQl
+Flask-Migrate
