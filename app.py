@@ -214,6 +214,44 @@ def post(author, slug):
     return abort(404)
 
 
+# Editor for Indivijual Posts. (edit_post page)
+@app.route("/edit/", methods=["POST"])
+def edit_post():
+    post = Posts.query.get_or_404(request.form.get("id"))
+    form = PostForm()
+    form.content.data = (
+        post.content
+    )  # Because textareas in html-forms don't take defaul value!
+    if "to_edit" in request.form:
+        return render_template("edit_post.html", form=form, post=post)
+    else:
+        post.title = request.form.get("title")  # or form.title.data
+        post.author = request.form.get("author")  # or form.author.data
+        post.slug = request.form.get("slug")  # or form.slug.data
+        post.content = request.form.get("content")  # or form.content.data
+        try:
+            db.session.commit()
+            flash("11")  # Blog updated Successfully.
+            return redirect(url_for("post", author=post.author, slug=post.slug))
+        except:
+            flash("4")  # Sorry! Something Went Wrong!
+            return render_template("edit_post.html", form=form, post=post)
+
+
+# delete endpoint for posts
+@app.route("/delete_post/", methods=["POST"])
+def delete_post():
+    post_to_delete = Posts.query.get_or_404(request.form.get("id"))
+    try:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        flash("12")  # Post successfully deleted.
+        return redirect(url_for("posts"))
+    except:
+        flash("4")  # Sorry! Something Went Wrong!
+        return redirect(url_for("posts"))
+
+
 # how to return JSON with flask! (Usually Used with APIs)
 @app.route("/date/")
 def get_current_date():
@@ -291,6 +329,7 @@ def update_user(id):
         return render_template("update.html", user=user_to_update, form=form)
 
 
+# Route to use (Temporary!)
 @app.route("/user/<name>")
 def user(name):
     return render_template("user.html", name=name)
@@ -300,7 +339,7 @@ def user(name):
 @app.route("/add-post/", methods=["GET", "POST"])
 def add_post():
     form = PostForm()
-    if form.validate_on_submit():
+    if request.method == "POST":
         post = Posts(
             title=request.form.get("title"),
             author=request.form.get("author"),
@@ -319,18 +358,19 @@ def add_post():
     return render_template("add_post.html", form=form)
 
 
-# create Custom Erroe Pages
+# Error-Handler for Page Not Found Errors.
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
 
 
+# Error-Handler for Internal Server Errors.
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template("500.html"), 500
 
 
-# create name form page using flask-wtf and wtforms!
+# Create name form input-forms using flask-wtf and wtforms! (This page was made as an exercise)
 @app.route("/name-form", methods=["GET", "POST"])
 def name():
     name = None
@@ -347,7 +387,7 @@ def name():
     )
 
 
-# making a test login page with validating hashed passwords
+# Making a test login page with validating hashed passwords
 @app.route("/login_test", methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -364,6 +404,6 @@ def login():
     return render_template("login_test.html", form=form, logged=False)
 
 
-# the code bellow is to run the file directly from IDE
+# The code bellow is to run the file directly from IDE
 if __name__ == "__main__":
     app.run(debug=True)

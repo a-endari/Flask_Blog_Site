@@ -25,8 +25,12 @@
         <h6 class="card-title">
             {{post.title }}
         </h6>
+        <a href=""></a>
         <p class="card-text">
-            {{ post.content |truncate(300, True) }}
+            {{ post.content |truncate(300, True, "... ") }}
+            <a class="link-info" href="{{url_for('post', author=post.author, slug=post.slug)}}">
+                read more
+            </a>
         </p>
     </div>
     <div class="card-footer abbas-spaced">
@@ -36,6 +40,21 @@
         <small class="text-muted">
             Date: {{post.date_posted.strftime("%Y-%m-%d")}}
         </small>
+    </div>
+    <div class="card-footer abbas-spaced">
+        <form action="{{ url_for('delete_post') }}" method="POST">
+            <input type="hidden" name="id" value="{{post.id}}" />
+            <button class="btn btn-sm btn-outline-danger" type="submit">
+                delete
+            </button>
+        </form>
+        <form action="{{ url_for('edit_post') }}" method="POST">
+            <input type="hidden" name="id" value="{{post.id}}" />
+            <input type="hidden" name="to_edit" value="yes" />
+            <button class="btn btn-sm btn-outline-dark" type="submit">
+                Edit
+            </button>
+        </form>
     </div>
 </div>
 <br>

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Edit Post
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<h1> Enter your info & write your 🐤BlogBird post</h1>
+
+<form class="shadow p-3 mb-5 bg-body rounded" action="{{url_for('edit_post')}}" method="POST">
+    <div class="mb-3">
+        <input type="hidden" name="id" value={{post.id}} />
+        {{ form.hidden_tag() }}
+        {{ form.title.label(class="form-label") }}
+        {{ form.title(class="form-control", value=post.title) }}
+        <br />
+        {{ form.author.label(class="form-label") }}
+        {{ form.author(class="form-control", value=post.author) }}
+        <br />
+        {{ form.slug.label(class="form-label") }}
+        {{ form.slug(class="form-control", value=post.slug) }}
+        <br />
+        {{ form.content.label(class="form-label") }}
+        {{ form.content(class="form-control", rows="10") }}
+        <br />
+        <div class="text-end">{{ form.submit(class="btn btn-primary") }}</div>
+    </div>
+</form>
+
+{% endblock %}

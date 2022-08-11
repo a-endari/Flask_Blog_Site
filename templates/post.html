@@ -23,9 +23,7 @@
         <h6 class="card-title">
             {{ post.title }}
         </h6>
-        <p class="card-text">
-            {{ post.content}}
-        </p>
+        <pre class="">{{ post.content}}</pre>
     </div>
     <div class="card-footer abbas-spaced">
         <small class="text-muted">
@@ -34,9 +32,18 @@
         <small class="text-muted">
             Date: {{post.date_posted.strftime("%Y-%m-%d")}}
         </small>
-        <a class="btn btn-outline-dark" href="#">
+    </div>
+    <div class="card-footer abbas-spaced">
+        <a class="btn btn-sm btn-outline-dark" href="#">
             Go to Top
         </a>
+        <form action="{{ url_for('edit_post') }}" method="POST">
+            <input type="hidden" name="id" value="{{post.id}}" />
+            <input type="hidden" name="to_edit" value="yes" />
+            <button class="btn btn-sm btn-outline-dark" type="submit">
+                Edit
+            </button>
+        </form>
     </div>
 </div>
 <br>
