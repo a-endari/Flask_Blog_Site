@@ -10,7 +10,15 @@ Edit Post
 
 {% block content %}
 
-<h1> Enter your info & write your 🐤BlogBird post</h1>
+<div class="spaced-between">
+    <h1> Enter your info & write your 🐤BlogBird post</h1>
+    <form action="{{ url_for('delete_post') }}" method="POST">
+        <input type="hidden" name="id" value="{{post.id}}" />
+        <button class="btn btn-danger mx-1 mx-3" type="submit">
+            Delete Post
+        </button>
+    </form>
+</div>
 
 <form class="shadow p-3 mb-5 bg-body rounded" action="{{url_for('edit_post')}}" method="POST">
     <div class="mb-3">
@@ -28,7 +36,9 @@ Edit Post
         {{ form.content.label(class="form-label") }}
         {{ form.content(class="form-control", rows="10") }}
         <br />
-        <div class="text-end">{{ form.submit(class="btn btn-primary") }}</div>
+        <div class="spaced-end">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
     </div>
 </form>
 

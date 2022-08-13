@@ -14,26 +14,25 @@
 {% for post in posts %}
 
 
-<div class="card shadow-lg text-bg-light mb-3 mx-auto" style="max-width: 75vw;">
-    <div class="card-header  abbas-spaced">
+<div class="post card shadow-lg text-bg-light mb-3 mx-auto">
+    <div class="card-header  spaced-between">
         <span>This is a 🐤BlogBird Post</span>
         <a class="btn btn-sm btn-secondary" href="{{url_for('post', author=post.author, slug=post.slug)}}">
-            Read full Post
+            Read Full Post
         </a>
     </div>
     <div class="card-body">
         <h6 class="card-title">
             {{post.title }}
         </h6>
-        <a href=""></a>
         <p class="card-text">
             {{ post.content |truncate(300, True, "... ") }}
-            <a class="link-info" href="{{url_for('post', author=post.author, slug=post.slug)}}">
+            <a class="link-secondary" href="{{url_for('post', author=post.author, slug=post.slug)}}">
                 read more
             </a>
         </p>
     </div>
-    <div class="card-footer abbas-spaced">
+    <div class="card-footer spaced-between">
         <small class="text-muted">
             Author: {{post.author}}
         </small>
@@ -41,11 +40,11 @@
             Date: {{post.date_posted.strftime("%Y-%m-%d")}}
         </small>
     </div>
-    <div class="card-footer abbas-spaced">
+    <div class="card-footer spaced-between">
         <form action="{{ url_for('delete_post') }}" method="POST">
             <input type="hidden" name="id" value="{{post.id}}" />
-            <button class="btn btn-sm btn-outline-danger" type="submit">
-                delete
+            <button class="btn btn-sm btn-danger" type="submit">
+                Delete
             </button>
         </form>
         <form action="{{ url_for('edit_post') }}" method="POST">

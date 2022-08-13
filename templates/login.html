@@ -10,19 +10,15 @@ Login
 {% block content %}
 
 
-
-{% if logged %}
-<h1> Weclome Dear {{user.name}}</h1>
-
-{% else %}
 <h1>Enter Your creditentials</h1><br>
 
 
 <form action="{{url_for('login')}}" method="POST">
     <div class="mb-3">
         {{ form.hidden_tag() }}
-        {{ form.email.label(class="form-label") }}
-        {{ form.email(class="form-control") }}
+
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control") }}
         <br />
         {{ form.password.label(class="form-label") }}
         {{ form.password(class="form-control") }}
@@ -30,7 +26,6 @@ Login
         <div class="text-end">{{ form.submit(class="btn btn-primary") }}</div>
     </div>
 </form>
-{% endif %}
 
 
 {% endblock %}

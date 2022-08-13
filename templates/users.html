@@ -22,6 +22,10 @@ Enter your name!
         {{ 'Full ' + form.name.label(class="form-label")+ ':' }}
         {{ form.name(class="form-control",placeholder="John Doe") }}
     </div>
+    <div class="mb-3">
+        {{ form.username.label(class="form-label")+ ':' }}
+        {{ form.username(class="form-control",placeholder="John_Doe") }}
+    </div>
     <div class="">
         {{ form.email.label(class="form-label")+ ' Address:' }}
         {{ form.email(class="form-control", placeholder="name@example.com") }}
@@ -62,7 +66,7 @@ Enter your name!
                             <th scope="col">ID</th>
                             <th class="text-center" scope="col">Full Name</th>
                             <th class="text-center" scope="col">Email Address</th>
-                            <th class="text-center" scope="col">Pass</th>
+                            <th class="text-center" scope="col">User Name</th>
                             <th class="text-center" scope="col">Delete</th>
                             <th class="text-center" scope="col">Edit</th>
                         </tr>
@@ -79,7 +83,7 @@ Enter your name!
                             {{ user.email }}
                         </td>
                         <td class="text-center">
-                            {{ user.password_hash }}
+                            {{ user.username }}
                         </td>
 
                         <td class="text-center">

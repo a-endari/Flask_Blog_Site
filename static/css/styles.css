@@ -1,5 +1,7 @@
 pre {
     white-space: pre-wrap;
+    font-family: inherit;
+    font-size: inherit;
 }
 
 .img {
@@ -7,15 +9,25 @@ pre {
 }
 
 .main {
-    max-width: 90vw;
+    /* max-width: 95vw; */
     margin: 0 auto;
     padding: 20px 40px;
 }
 
-.abbas-spaced {
+.spaced-between {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.spaced-end {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.post {
+    max-width: 95vw;
 }
 
 /* This is for the javascript demo code! */

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Dashboard
+
+{% endblock %}
+
+
+{% block content %}
+
+<h2>Dashboard</h2>
+<br>
+<div class="card">
+    <div class="card-header">
+        {{current_user.name }}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Dear {{ current_user.name }} wlecome to your user dashboard.</h5>
+        <p class="card-text">
+            <strong>Name: </strong> {{current_user.name }} <br>
+            <strong>User ID: </strong> {{current_user.id }} <br>
+            <strong>Username: </strong> {{current_user.username }} <br>
+            <strong>Email Address: </strong> {{current_user.email }} <br>
+            <strong>Date joined: </strong> {{current_user.date_added }}
+        </p>
+    </div>
+    <div class="card-footer text-end">
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+    </div>
+</div>
+
+
+{% endblock %}

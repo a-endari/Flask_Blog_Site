@@ -9,3 +9,4 @@ mysql-connector-python
 SQLAlchemy
 PyMySQl
 Flask-Migrate
+flask_login

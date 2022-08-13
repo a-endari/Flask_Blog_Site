@@ -1,4 +1,7 @@
+from enum import unique
 import os
+from datetime import datetime
+from dotenv import load_dotenv
 from flask import Flask, render_template, flash, request, redirect, url_for, abort
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -13,9 +16,15 @@ from wtforms import (
 from wtforms.validators import DataRequired, Email, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
-from dotenv import load_dotenv
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    login_user,
+    login_required,
+    logout_user,
+    current_user,
+)
 
 load_dotenv()
 
@@ -39,13 +48,27 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 # Initialize The Database from app! whitg the provided config files!
 db = SQLAlchemy(app)
+
+#This below is for Flask-Migrate stuff and makes that possible!
 migrate = Migrate(app, db)
 
 
+# Flask Login stuff
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(user_id)
+
+
 # Create database Model
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(20), nullable=False, unique=True)
+    name = db.Column(db.String(100), nullable=False,)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
@@ -90,6 +113,13 @@ class UserForm(FlaskForm):
 
     name = StringField(
         "Name",
+        validators=[
+            DataRequired("enter your name"),
+        ],
+    )
+
+    username = StringField(
+        "User Name",
         validators=[
             DataRequired("enter your name"),
         ],
@@ -166,13 +196,13 @@ class LoginForm(FlaskForm):
         ],
     )
 
-    email = EmailField(
-        "Email",
+    username = StringField(
+        "Username",
         validators=[
-            DataRequired(),
-            Email(),
+            DataRequired("enter your name"),
         ],
     )
+
     submit = SubmitField("Submit")
 
 
@@ -196,7 +226,7 @@ def index():
     return render_template("index.html", name=name, stuff=stuff, pizzas=favorite_pizzas)
 
 
-# blog post route - all blogs
+# Blog post route - for all blog posts
 @app.route("/posts/")
 def posts():
     posts = Posts.query.order_by(
@@ -205,7 +235,30 @@ def posts():
     return render_template("posts.html", posts=posts)
 
 
-# route for a specific blog post
+# Add-post page route to add a new post
+@app.route("/add-post/", methods=["GET", "POST"])
+def add_post():
+    form = PostForm()
+    if request.method == "POST":
+        post = Posts(
+            title=request.form.get("title"),
+            author=request.form.get("author"),
+            content=request.form.get("content"),
+            slug=request.form.get("slug"),
+        )
+        # add post data to database
+        db.session.add(post)
+        db.session.commit()
+
+        form.title.data = ""
+        form.author.data = ""
+        form.content.data = ""
+        form.slug.data = ""
+        flash("10")  # Blog post submitted successfully
+    return render_template("add_post.html", form=form)
+
+
+# Route for a individual blog post
 @app.route("/<string:author>/<string:slug>")
 def post(author, slug):
     post = Posts.query.filter_by(slug=slug, author=author).first()
@@ -238,7 +291,7 @@ def edit_post():
             return render_template("edit_post.html", form=form, post=post)
 
 
-# delete endpoint for posts
+# Delete endpoint for posts
 @app.route("/delete_post/", methods=["POST"])
 def delete_post():
     post_to_delete = Posts.query.get_or_404(request.form.get("id"))
@@ -252,14 +305,7 @@ def delete_post():
         return redirect(url_for("posts"))
 
 
-# how to return JSON with flask! (Usually Used with APIs)
-@app.route("/date/")
-def get_current_date():
-
-    return {"Date": date.today()}
-
-
-# a page to view sers list and add new users
+# Route view sers list and add new users
 @app.route("/users/", methods=["GET", "POST"])
 def add_user():
     form = UserForm()
@@ -271,6 +317,7 @@ def add_user():
             # Hashing password
             user = Users(
                 name=form.name.data,
+                username=form.username.data,
                 email=form.email.data,
                 password=form.password.data,
             )
@@ -279,6 +326,7 @@ def add_user():
             flash("2")
             name = form.name.data
             form.name.data = ""
+            form.username.data = ""
             form.email.data = ""
             form.password.data = ""
             our_users = Users.query.order_by(Users.date_added)
@@ -316,6 +364,7 @@ def update_user(id):
             return render_template("update.html", user=user_to_update, form=form)
         else:
             user_to_update.name = request.form.get("name")
+            user_to_update.username = request.form.get("username")
             user_to_update.email = request.form.get("email")
             user_to_update.password = request.form.get("password")
             try:
@@ -329,33 +378,10 @@ def update_user(id):
         return render_template("update.html", user=user_to_update, form=form)
 
 
-# Route to use (Temporary!)
+# NOTE: Route to uses (Temporary!)
 @app.route("/user/<name>")
 def user(name):
     return render_template("user.html", name=name)
-
-
-# add-post page route
-@app.route("/add-post/", methods=["GET", "POST"])
-def add_post():
-    form = PostForm()
-    if request.method == "POST":
-        post = Posts(
-            title=request.form.get("title"),
-            author=request.form.get("author"),
-            content=request.form.get("content"),
-            slug=request.form.get("slug"),
-        )
-        # add post data to database
-        db.session.add(post)
-        db.session.commit()
-
-        form.title.data = ""
-        form.author.data = ""
-        form.content.data = ""
-        form.slug.data = ""
-        flash("10")  # Blog post submitted successfully
-    return render_template("add_post.html", form=form)
 
 
 # Error-Handler for Page Not Found Errors.
@@ -370,8 +396,9 @@ def internal_server_error(e):
     return render_template("500.html"), 500
 
 
-# Create name form input-forms using flask-wtf and wtforms! (This page was made as an exercise)
+# NOTE: Create name form input-forms using flask-wtf and wtforms! (This page was made as an exercise)
 @app.route("/name-form", methods=["GET", "POST"])
+@login_required
 def name():
     name = None
     form = NamerForm()
@@ -387,21 +414,37 @@ def name():
     )
 
 
-# Making a test login page with validating hashed passwords
-@app.route("/login_test", methods=["GET", "POST"])
+# NOTE: Making a test login page with validating hashed passwords
+@app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
-    # if form.validate_on_submit():
-    if request.method == "POST":
-        if request.form.get("email") in [user.email for user in Users.query]:
-            user = Users.query.filter_by(email=request.form.get("email")).first()
+    if form.validate_on_submit():
+        # if request.method == "POST":
+        user = Users.query.filter_by(username=request.form.get("username")).first()
+        if user:
             if user.verify_password(request.form.get("password")):
-                return render_template("login_test.html", user=user, logged=True)
+                login_user(user)  # This is the Flask Login thing
+                flash("Login Successfull")
+                return redirect(url_for("dashboard"))
             flash("6")  # Incorrect password
-            return render_template("login_test.html", form=form, logged=False)
-        flash("7")  # email not in database
-        return render_template("login_test.html", form=form, logged=False)
-    return render_template("login_test.html", form=form, logged=False)
+            return render_template("login.html", form=form)
+        flash("7")  # username not in database
+        return render_template("login.html", form=form)
+    return render_template("login.html", form=form)
+
+
+@app.route("/logout", methods=["GET", "POST"])
+@login_required
+def logout():
+    logout_user()
+    flash("Logged out Successfully.")
+    return redirect(url_for("index"))
+
+
+@app.route("/dashboard", methods=["GET", "POST"])
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
 
 
 # The code bellow is to run the file directly from IDE
