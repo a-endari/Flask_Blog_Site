@@ -52,6 +52,32 @@ class UserForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
+class EditUserForm(FlaskForm):
+
+    name = StringField(
+        "Name",
+        validators=[
+            DataRequired("enter your name"),
+        ],
+    )
+
+    username = StringField(
+        "User Name",
+        validators=[
+            DataRequired("enter your name"),
+        ],
+    )
+
+    email = EmailField(
+        "Email",
+        validators=[
+            DataRequired(),
+            Email(),
+        ],
+    )
+    submit = SubmitField("Submit")
+
+
 # Create a Form class for PostForm Page
 class PostForm(FlaskForm):
     """
@@ -106,15 +132,4 @@ class LoginForm(FlaskForm):
         ],
     )
 
-    submit = SubmitField("Submit")
-
-
-# NOTE: Create a Form class
-class NamerForm(FlaskForm):
-    name = StringField(
-        "What's your name",
-        validators=[
-            DataRequired(),
-        ],
-    )
     submit = SubmitField("Submit")

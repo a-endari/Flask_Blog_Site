@@ -24,26 +24,18 @@ Update user info
     {{ form.hidden_tag() }}
     <div class="mb-3">
         {{ 'Full ' + form.name.label(class="form-label")+ ':' }}
-        {{ form.name(class="form-control",placeholder="John Doe", value=user.name) }}
+        {{ form.name(class="form-control mb-3",placeholder="John Doe", value=user.name) }}
     </div>
     <div class="">
         {{ form.username.label(class="form-label")+ ' Address:' }}
-        {{ form.username(class="form-control", placeholder="Maximum 20 character!", value=user.username) }}
+        {{ form.username(class="form-control mb-3", placeholder="Maximum 20 character!", value=user.username) }}
     </div>
     <div class="">
         {{ form.email.label(class="form-label")+ ' Address:' }}
-        {{ form.email(class="form-control", placeholder="name@example.com", value=user.email) }}
+        {{ form.email(class="form-control mb-3", placeholder="name@example.com", value=user.email) }}
     </div>
     <br>
-    <div class="mb-3">
-        {{ 'New or old ' + form.password.label(class="form-label")+ ':' }}
-        {{ form.password(class="form-control") }}
-    </div>
-    <br />
-    <div class="mb-3">
-        {{ "Confirm " + form.password2.label(class="form-label")+ ':' }}
-        {{ form.password2(class="form-control") }}
-    </div>
+
     <div class=" text-end">
         <a class="btn btn btn-danger" href="{{url_for('delete_user', id=user.id)}}">Delete</a>
         {{ form.submit(class="btn btn-primary") }}

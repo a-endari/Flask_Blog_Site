@@ -14,7 +14,7 @@ from flask_login import (
     logout_user,
     current_user,
 )
-from webforms import UserForm, PostForm, LoginForm
+from webforms import UserForm, PostForm, LoginForm, EditUserForm
 
 load_dotenv()
 
@@ -124,6 +124,8 @@ def posts():
 @login_required
 def add_post():
     form = PostForm()
+    form.author.data = current_user.username
+    form.slug.data = f"{datetime.today().strftime('%Y%m%d%H%M')}"
     if request.method == "POST":
         post = Posts(
             title=request.form.get("title"),
@@ -231,7 +233,7 @@ def add_user():
 @login_required
 def edit_user(id):
     if current_user.username == "admin":
-        form = UserForm()
+        form = EditUserForm()
         user_to_update = Users.query.get_or_404(id)
         if form.validate_on_submit():
             previous_user = Users.query.filter_by(
@@ -244,13 +246,12 @@ def edit_user(id):
                 user_to_update.name = request.form.get("name")
                 user_to_update.username = request.form.get("username")
                 user_to_update.email = request.form.get("email")
-                user_to_update.password = request.form.get("password")
-                user_to_update.password2 = request.form.get("password2")
+                # user_to_update.password = request.form.get("password")
+                # user_to_update.password2 = request.form.get("password2")
                 try:
                     db.session.commit()
-                    db.flush()
                     flash("3")  # User info updated successfully!
-                    return redirect(url_for("add_user"))
+                    return redirect(url_for("user_management"))
                 except:
                     flash("4")  # Sorry! Something Went Wrong!
                     return render_template(

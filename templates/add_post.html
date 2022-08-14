@@ -14,15 +14,12 @@ Create Post
 
 <form class="shadow p-3 mb-5 bg-body rounded" action="{{url_for('add_post')}}" method="POST">
     <div class="mb-3">
+        <br />
         {{ form.hidden_tag() }}
         {{ form.title.label(class="form-label") }}
         {{ form.title(class="form-control") }}
-        <br />
-        {{ form.author.label(class="form-label") }}
-        {{ form.author(class="form-control") }}
-        <br />
-        {{ form.slug.label(class="form-label") }}
-        {{ form.slug(class="form-control") }}
+        {{ form.author(class="form-control", type="hidden") }}
+        {{ form.slug(class="form-control", type="hidden") }}
         <br />
         {{ form.content.label(class="form-label") }}
         {{ form.content(class="form-control", rows="10") }}

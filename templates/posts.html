@@ -40,11 +40,11 @@
             Date: {{post.date_posted.strftime("%Y-%m-%d")}}
         </small>
     </div>
-    {% if current_user.is_authenticated and current_user.username == post.author %}
+    {% if current_user.username == 'admin' or current_user.username == post.author %}
     <div class="card-footer spaced-between">
         <form action="{{ url_for('delete_post') }}" method="POST">
             <input type="hidden" name="id" value="{{post.id}}" />
-            <button class="btn btn-sm btn-danger" type="submit">
+            <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Are you sure to delete?')">
                 Delete
             </button>
         </form>
