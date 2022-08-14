@@ -133,3 +133,16 @@ class LoginForm(FlaskForm):
     )
 
     submit = SubmitField("Submit")
+
+
+# Create a Form class For Search
+class SearchForm(FlaskForm):
+
+    searched = StringField(
+        "Search",
+        validators=[
+            DataRequired(),
+        ],
+    )
+
+    submit = SubmitField("Submit")

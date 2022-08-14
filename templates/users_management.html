@@ -12,7 +12,12 @@ Enter your name!
 
 
 {% block content %}
+<div class="text-end">
 
+    <a class="btn  btn-primary mb-3" href=" {{url_for('add_user')}}">
+        Add User
+    </a>
+</div>
 <div class="accordion " id="accordion">
     <div class="accordion-item">
         <h2 class="accordion-header" id="flush-headingOne">
@@ -61,7 +66,10 @@ Enter your name!
             </div>
         </div>
     </div>
+</div>
 
 
+<br>
+<br>
 
-    {% endblock %}
+{% endblock %}

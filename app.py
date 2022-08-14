@@ -14,7 +14,7 @@ from flask_login import (
     logout_user,
     current_user,
 )
-from webforms import UserForm, PostForm, LoginForm, EditUserForm
+from webforms import UserForm, PostForm, LoginForm, EditUserForm, SearchForm
 
 load_dotenv()
 
@@ -68,6 +68,9 @@ class Users(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
 
+    # user's many posts
+    posts = db.relationship("Posts", backref="post_author")
+
     # Create representing string repr!
     def __repr__(self) -> str:
         return f"<Name: {self.name!r}>"
@@ -91,9 +94,7 @@ class Posts(db.Model):
     title = db.Column(
         db.String(255),
     )
-    author = db.Column(
-        db.String(255),
-    )
+    author = db.Column(db.Integer, db.ForeignKey("users.id"))
     slug = db.Column(
         db.String(255),
     )
@@ -110,6 +111,27 @@ def index():
     return render_template("index.html")
 
 
+# pass stuff to navbar (to make search bar usable!)
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(searchform=form)
+
+
+# Search Funcion for NavbarSearch
+@app.route("/search/", methods=["POST"])
+def search():
+    form = SearchForm()
+    if form.validate_on_submit():
+        searched = form.searched.data
+        posts = Posts.query.filter(Posts.content.like("%" + searched + "%"))
+        orderd_posts = posts.order_by(Posts.title).all()
+        return render_template(
+            "search.html", posts=orderd_posts, searched=f"{searched!r}"
+        )
+    return render_template("search.html", posts=None)
+
+
 # Blog post route - for all blog posts
 @app.route("/posts/")
 def posts():
@@ -124,7 +146,7 @@ def posts():
 @login_required
 def add_post():
     form = PostForm()
-    form.author.data = current_user.username
+    form.author.data = current_user.id
     form.slug.data = f"{datetime.today().strftime('%Y%m%d%H%M')}"
     if request.method == "POST":
         post = Posts(
@@ -136,13 +158,17 @@ def add_post():
         # add post data to database
         db.session.add(post)
         db.session.commit()
-
         form.title.data = ""
-        form.author.data = ""
         form.content.data = ""
-        form.slug.data = ""
         flash("10")  # Blog post submitted successfully
-    return render_template("add_post.html", form=form)
+        return render_template(
+            "add_post.html",
+            form=form,
+        )
+    return render_template(
+        "add_post.html",
+        form=form,
+    )
 
 
 # Route for a individual blog post
@@ -180,16 +206,24 @@ def edit_post():
 
 # Delete endpoint for posts
 @app.route("/delete_post/", methods=["POST"])
+@login_required
 def delete_post():
     post_to_delete = Posts.query.get_or_404(request.form.get("id"))
-    try:
-        db.session.delete(post_to_delete)
-        db.session.commit()
-        flash("12")  # Post successfully deleted.
-        return redirect(url_for("posts"))
-    except:
-        flash("4")  # Sorry! Something Went Wrong!
-        return redirect(url_for("posts"))
+    if (
+        current_user.username == "admin"
+        or current_user.username == post_to_delete.post_author.username
+    ):
+
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash("12")  # Post successfully deleted.
+            return redirect(url_for("posts"))
+        except:
+            flash("4")  # Sorry! Something Went Wrong!
+            return redirect(url_for("posts"))
+    flash("13")
+    return redirect(url_for("posts"))
 
 
 # Route view sers list and add new users
@@ -197,7 +231,6 @@ def delete_post():
 def add_user():
     form = UserForm()
     name = None
-    our_users = Users.query.order_by(Users.date_added)
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
@@ -223,9 +256,7 @@ def add_user():
             )
         else:
             flash("1")
-    return render_template(
-        "user_register.html", name=name, form=form, our_users=our_users
-    )
+    return render_template("user_register.html", name=name, form=form)
 
 
 # Update User Records in Database
@@ -275,16 +306,23 @@ def user_management():
 
 # A route for deleting users from database
 @app.route("/delete_user/<int:id>/")
+@login_required
 def delete_user(id):
     user_to_delete = Users.query.get_or_404(id)
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("5")  # User successfully deleted.
-        return redirect(url_for("add_user"))
-    except:
-        flash("4")  # Sorry! Something Went Wrong!
-        return redirect(url_for("add_user"))
+    if (
+        current_user.username == "admin"
+        or current_user.username == user_to_delete.username
+    ):
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash("5")  # User successfully deleted.
+            return redirect(url_for("add_user"))
+        except:
+            flash("4")  # Sorry! Something Went Wrong!
+            return redirect(url_for("add_user"))
+    flash("14")
+    return redirect(url_for("dashboard"))
 
 
 # Login page with validating hashed passwords

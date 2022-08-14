@@ -61,6 +61,18 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
+{% elif message == '13'%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    You are not athorized to delete this post.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% elif message == '14'%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Only admins can delete other users!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
 
 {% else %}
 <div class="alert alert-success alert-dismissible fade show" role="alert">

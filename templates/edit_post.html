@@ -9,16 +9,8 @@ Edit Post
 
 
 {% block content %}
-{% if current_user.username != post.author %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    You cannot edit the posts you haven't wrote!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+{% if current_user.username == 'admin' or current_user.username == post.post_author.username %}
 
-<a class="btn btn-info" href="{{url_for('posts')}}">all posts</a>
-
-
-{% else %}
 <div class="spaced-between">
     <h1> Enter your info & write your 🐤BlogBird post</h1>
     <form action="{{ url_for('delete_post') }}" method="POST">
@@ -36,7 +28,7 @@ Edit Post
         {{ form.title.label(class="form-label") }}
         {{ form.title(class="form-control", value=post.title) }}
         <br />
-        {{ form.author(class="form-control", value=post.author, type="hidden") }}
+        {{ form.author(class="form-control", value=post.post_author.id, type="hidden") }}
 
         {{ form.slug(class="form-control", value=post.slug, type="hidden") }}
 
@@ -48,6 +40,20 @@ Edit Post
         </div>
     </div>
 </form>
+
+{% else %}
+
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    You cannot edit the posts you haven't wrote!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <script>
+        setTimeout(function () {
+            window.location.href = "{{ url_for('posts') }}";
+        }, 2000);
+    </script>
+</div>
+
+
 {% endif %}
 
 
