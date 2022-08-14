@@ -13,42 +13,6 @@ Enter your name!
 
 {% block content %}
 
-
-<form class="shadow p-3 mb-5 bg-body rounded" action="" method="post">
-    <h3>Enter your info:</h3>
-    <br>
-    {{ form.hidden_tag() }}
-    <div class="mb-3">
-        {{ 'Full ' + form.name.label(class="form-label")+ ':' }}
-        {{ form.name(class="form-control",placeholder="John Doe") }}
-    </div>
-    <div class="mb-3">
-        {{ form.username.label(class="form-label")+ ':' }}
-        {{ form.username(class="form-control",placeholder="John_Doe") }}
-    </div>
-    <div class="">
-        {{ form.email.label(class="form-label")+ ' Address:' }}
-        {{ form.email(class="form-control", placeholder="name@example.com") }}
-    </div>
-    <br>
-    <div class="mb-3">
-        {{ form.password.label(class="form-label")+ ':' }}
-        {{ form.password(class="form-control") }}
-    </div>
-    <br />
-    <div class="mb-3">
-        {{ form.password2.label(class="form-label")+ ':' }}
-        {{ form.password2(class="form-control") }}
-    </div>
-    <br />
-    <div class=" text-end">
-        {{ form.submit(class="btn btn-primary") }}
-    </div>
-    </div>
-</form>
-</div>
-<br>
-<br>
 <div class="accordion " id="accordion">
     <div class="accordion-item">
         <h2 class="accordion-header" id="flush-headingOne">
@@ -71,7 +35,7 @@ Enter your name!
                             <th class="text-center" scope="col">Edit</th>
                         </tr>
                     </thead>
-                    {% for user in our_users %}
+                    {% for user in users %}
                     <tr>
                         <td>
                             {{ user.id }}
@@ -90,7 +54,7 @@ Enter your name!
                             <a class="btn btn-sm btn-danger" href="{{url_for('delete_user', id=user.id)}}">Delete</a>
                         </td>
                         <td class="text-center">
-                            <a class="btn btn-sm btn-secondary" href="{{url_for('update_user', id=user.id)}}">Edit</a>
+                            <a class="btn btn-sm btn-secondary" href="{{url_for('edit_user', id=user.id)}}">Edit</a>
                         </td>
                     </tr>
                     {% endfor %}

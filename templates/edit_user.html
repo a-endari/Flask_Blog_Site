@@ -18,7 +18,7 @@ Update user info
 
 <br>
 
-<form class="shadow p-3 mb-5 bg-body rounded" action="/user-update/{{user.id}}" method="post">
+<form class="shadow p-3 mb-5 bg-body rounded" action="" method="POST">
     <h3>Enter your info:</h3>
     <br>
     {{ form.hidden_tag() }}
@@ -27,17 +27,21 @@ Update user info
         {{ form.name(class="form-control",placeholder="John Doe", value=user.name) }}
     </div>
     <div class="">
+        {{ form.username.label(class="form-label")+ ' Address:' }}
+        {{ form.username(class="form-control", placeholder="Maximum 20 character!", value=user.username) }}
+    </div>
+    <div class="">
         {{ form.email.label(class="form-label")+ ' Address:' }}
         {{ form.email(class="form-control", placeholder="name@example.com", value=user.email) }}
     </div>
     <br>
     <div class="mb-3">
-        {{ 'New ' + form.password.label(class="form-label")+ ':' }}
+        {{ 'New or old ' + form.password.label(class="form-label")+ ':' }}
         {{ form.password(class="form-control") }}
     </div>
     <br />
     <div class="mb-3">
-        {{ form.password2.label(class="form-label")+ ':' }}
+        {{ "Confirm " + form.password2.label(class="form-label")+ ':' }}
         {{ form.password2(class="form-control") }}
     </div>
     <div class=" text-end">

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+{% if name %}
+{{name}}'s welcome page
+{% else %}
+Enter your name!
+{% endif %}
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<form class="shadow p-3 mb-5 bg-body rounded" action="" method="post">
+    <h3>Enter your info:</h3>
+    <br>
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ 'Full ' + form.name.label(class="form-label")+ ':' }}
+        {{ form.name(class="form-control",placeholder="John Doe") }}
+    </div>
+    <div class="mb-3">
+        {{ form.username.label(class="form-label")+ ':' }}
+        {{ form.username(class="form-control",placeholder="John_Doe") }}
+    </div>
+    <div class="">
+        {{ form.email.label(class="form-label")+ ' Address:' }}
+        {{ form.email(class="form-control", placeholder="name@example.com") }}
+    </div>
+    <br>
+    <div class="mb-3">
+        {{ form.password.label(class="form-label")+ ':' }}
+        {{ form.password(class="form-control") }}
+    </div>
+    <br />
+    <div class="mb-3">
+        {{ form.password2.label(class="form-label")+ ':' }}
+        {{ form.password2(class="form-control") }}
+    </div>
+    <br />
+    <div class=" text-end">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+    </div>
+</form>
+</div>
+
+
+
+    {% endblock %}

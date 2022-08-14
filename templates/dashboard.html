@@ -27,8 +27,58 @@ Dashboard
     </div>
     <div class="card-footer text-end">
         <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+        <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+            Edit info
+        </button>
     </div>
 </div>
 
 
+<!-- Here on we have the edit user stuff -->
+<br><br>
+<p>
+
+</p>
+<div>
+    <div class=" card collapse collapse-vertical" id="collapseWidthExample">
+        <div class="card-header">Enter your info:</div>
+        <div class="card-body">
+            <form class=" bg-body rounded" action="" method="POST">
+                <br>
+                {{ form.hidden_tag() }}
+                <div class="card-text">
+                    <div class="mb-3">
+                        {{ 'Full ' + form.name.label(class="form-label")+ ':' }}
+                        {{ form.name(class="form-control",placeholder="John Doe", value=user.name) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label")+ ':' }}
+                        {{ form.username(class="form-control", placeholder="Maximum 20 character!", value=user.username)
+                        }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label")+ ' Address:' }}
+                        {{ form.email(class="form-control", placeholder="name@example.com", value=user.email) }}
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        {{ 'New or old ' + form.password.label(class="form-label")+ ':' }}
+                        {{ form.password(class="form-control") }}
+                    </div>
+                    <br />
+                    <div class="mb-3">
+                        {{ form.password2.label(class="form-label")+ ':' }}
+                        {{ form.password2(class="form-control") }}
+                    </div>
+                    <div class=" text-end">
+                        <a class="btn btn btn-outline-danger" href="{{url_for('delete_user', id=user.id)}}">Delete</a>
+                        {{ form.submit(class="btn btn-outline-primary") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
 {% endblock %}

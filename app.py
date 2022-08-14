@@ -1,19 +1,8 @@
-from enum import unique
 import os
 from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, render_template, flash, request, redirect, url_for, abort
-from flask_wtf import FlaskForm
-from wtforms import (
-    TextAreaField,
-    StringField,
-    SubmitField,
-    EmailField,
-    PasswordField,
-    BooleanField,
-    ValidationError,
-)
-from wtforms.validators import DataRequired, Email, EqualTo
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -25,6 +14,7 @@ from flask_login import (
     logout_user,
     current_user,
 )
+from webforms import UserForm, PostForm, LoginForm
 
 load_dotenv()
 
@@ -49,14 +39,16 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 # Initialize The Database from app! whitg the provided config files!
 db = SQLAlchemy(app)
 
-#This below is for Flask-Migrate stuff and makes that possible!
+# This below is for Flask-Migrate stuff and makes that possible!
 migrate = Migrate(app, db)
 
 
 # Flask Login stuff
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+login_manager.login_view = (  # type: ignore
+    "login"  # This sets the view that is redirected when login required!
+)
 
 
 @login_manager.user_loader
@@ -68,7 +60,10 @@ def load_user(user_id):
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    name = db.Column(db.String(100), nullable=False,)
+    name = db.Column(
+        db.String(100),
+        nullable=False,
+    )
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
@@ -108,122 +103,11 @@ class Posts(db.Model):
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-# Create a Form class for Database
-class UserForm(FlaskForm):
-
-    name = StringField(
-        "Name",
-        validators=[
-            DataRequired("enter your name"),
-        ],
-    )
-
-    username = StringField(
-        "User Name",
-        validators=[
-            DataRequired("enter your name"),
-        ],
-    )
-
-    password = PasswordField(
-        "Password",
-        validators=[
-            DataRequired(),
-            EqualTo("password2", message="Passwords Must Match"),
-        ],
-    )
-    password2 = PasswordField(
-        "Confirm password",
-        validators=[
-            DataRequired(),
-        ],
-    )
-
-    email = EmailField(
-        "Email",
-        validators=[
-            DataRequired(),
-            Email(),
-        ],
-    )
-    submit = SubmitField("Submit")
-
-
-# Create a Form class for PostForm Page
-class PostForm(FlaskForm):
-    """
-    PostForm a model for post form
-    """
-
-    title = StringField(
-        "Title",
-        validators=[
-            DataRequired("enter your name"),
-        ],
-    )
-
-    author = StringField(
-        "Author",
-        validators=[
-            DataRequired(),
-        ],
-    )
-
-    content = TextAreaField(
-        "Content",
-        validators=[
-            DataRequired(),
-        ],
-    )
-
-    slug = StringField(
-        "Slug",
-        validators=[
-            DataRequired(),
-        ],
-    )
-
-    submit = SubmitField("Submit")
-
-
-# Create a Form class For Login
-class LoginForm(FlaskForm):
-
-    password = PasswordField(
-        "Password",
-        validators=[
-            DataRequired(),
-        ],
-    )
-
-    username = StringField(
-        "Username",
-        validators=[
-            DataRequired("enter your name"),
-        ],
-    )
-
-    submit = SubmitField("Submit")
-
-
-# Create a Form class
-class NamerForm(FlaskForm):
-    name = StringField(
-        "What's your name",
-        validators=[
-            DataRequired(),
-        ],
-    )
-    submit = SubmitField("Submit")
-
-
 # Create a route decorator for index
 @app.route("/")
+@app.route("/index/")
 def index():
-    favorite_pizzas = ["cheese", "pepperoni", "beef & garlic"]
-    name = "abbas endari"
-    stuff = "this is <strong> Bold text </strong>"
-    return render_template("index.html", name=name, stuff=stuff, pizzas=favorite_pizzas)
+    return render_template("index.html")
 
 
 # Blog post route - for all blog posts
@@ -237,6 +121,7 @@ def posts():
 
 # Add-post page route to add a new post
 @app.route("/add-post/", methods=["GET", "POST"])
+@login_required
 def add_post():
     form = PostForm()
     if request.method == "POST":
@@ -259,7 +144,7 @@ def add_post():
 
 
 # Route for a individual blog post
-@app.route("/<string:author>/<string:slug>")
+@app.route("/<string:author>/<string:slug>/")
 def post(author, slug):
     post = Posts.query.filter_by(slug=slug, author=author).first()
     if post:
@@ -306,7 +191,7 @@ def delete_post():
 
 
 # Route view sers list and add new users
-@app.route("/users/", methods=["GET", "POST"])
+@app.route("/new_user/", methods=["GET", "POST"])
 def add_user():
     form = UserForm()
     name = None
@@ -329,17 +214,66 @@ def add_user():
             form.username.data = ""
             form.email.data = ""
             form.password.data = ""
+            form.password2.data = ""
             our_users = Users.query.order_by(Users.date_added)
             return render_template(
-                "users.html", name=name, form=form, our_users=our_users
+                "user_register.html", name=name, form=form, our_users=our_users
             )
         else:
             flash("1")
-    return render_template("users.html", name=name, form=form, our_users=our_users)
+    return render_template(
+        "user_register.html", name=name, form=form, our_users=our_users
+    )
+
+
+# Update User Records in Database
+@app.route("/user-edit/<int:id>/", methods=["GET", "POST"])
+@login_required
+def edit_user(id):
+    if current_user.username == "admin":
+        form = UserForm()
+        user_to_update = Users.query.get_or_404(id)
+        if form.validate_on_submit():
+            previous_user = Users.query.filter_by(
+                username=request.form.get("username")
+            ).first()
+            if previous_user and id != previous_user.id:
+                flash("1")
+                return render_template("edit_user.html", user=user_to_update, form=form)
+            else:
+                user_to_update.name = request.form.get("name")
+                user_to_update.username = request.form.get("username")
+                user_to_update.email = request.form.get("email")
+                user_to_update.password = request.form.get("password")
+                user_to_update.password2 = request.form.get("password2")
+                try:
+                    db.session.commit()
+                    db.flush()
+                    flash("3")  # User info updated successfully!
+                    return redirect(url_for("add_user"))
+                except:
+                    flash("4")  # Sorry! Something Went Wrong!
+                    return render_template(
+                        "edit_user.html", user=user_to_update, form=form
+                    )
+        else:
+            return render_template("edit_user.html", user=user_to_update, form=form)
+    flash("Log in as an administrator to access this page.")
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/users-managemment/")
+@login_required
+def user_management():
+    if current_user.username == "admin":
+        users = Users.query.all()
+        return render_template("users_management.html", users=users)
+    flash("Log in as an administrator to access this page.")
+    return redirect(url_for("dashboard"))
 
 
 # A route for deleting users from database
-@app.route("/delete_user/<int:id>")
+@app.route("/delete_user/<int:id>/")
 def delete_user(id):
     user_to_delete = Users.query.get_or_404(id)
     try:
@@ -352,70 +286,8 @@ def delete_user(id):
         return redirect(url_for("add_user"))
 
 
-# Update User Records in Database
-@app.route("/user-update/<int:id>", methods=["GET", "POST"])
-def update_user(id):
-    form = UserForm()
-    user_to_update = Users.query.get_or_404(id)
-    if form.validate_on_submit():
-        previous_user = Users.query.filter_by(email=request.form.get("email")).first()
-        if previous_user and id != previous_user.id:
-            flash("1")
-            return render_template("update.html", user=user_to_update, form=form)
-        else:
-            user_to_update.name = request.form.get("name")
-            user_to_update.username = request.form.get("username")
-            user_to_update.email = request.form.get("email")
-            user_to_update.password = request.form.get("password")
-            try:
-                db.session.commit()
-                flash("3")  # User info updated successfully!
-                return redirect(url_for("add_user"))
-            except:
-                flash("4")  # Sorry! Something Went Wrong!
-                return render_template("update.html", user=user_to_update, form=form)
-    else:
-        return render_template("update.html", user=user_to_update, form=form)
-
-
-# NOTE: Route to uses (Temporary!)
-@app.route("/user/<name>")
-def user(name):
-    return render_template("user.html", name=name)
-
-
-# Error-Handler for Page Not Found Errors.
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("404.html"), 404
-
-
-# Error-Handler for Internal Server Errors.
-@app.errorhandler(500)
-def internal_server_error(e):
-    return render_template("500.html"), 500
-
-
-# NOTE: Create name form input-forms using flask-wtf and wtforms! (This page was made as an exercise)
-@app.route("/name-form", methods=["GET", "POST"])
-@login_required
-def name():
-    name = None
-    form = NamerForm()
-    # Validate Form:
-    if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = ""
-        flash("Form submitted successfully!")
-    return render_template(
-        "nameform.html",
-        name=name,
-        form=form,
-    )
-
-
-# NOTE: Making a test login page with validating hashed passwords
-@app.route("/login", methods=["GET", "POST"])
+# Login page with validating hashed passwords
+@app.route("/login/", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -433,18 +305,51 @@ def login():
     return render_template("login.html", form=form)
 
 
-@app.route("/logout", methods=["GET", "POST"])
+# The endpoint (view!) used to log current user out
+@app.route("/logout/", methods=["GET", "POST"])
 @login_required
 def logout():
     logout_user()
     flash("Logged out Successfully.")
-    return redirect(url_for("index"))
+    return redirect(url_for("login"))
 
 
-@app.route("/dashboard", methods=["GET", "POST"])
+# Route to user-profile/dashboard
+@app.route("/dashboard/", methods=["GET", "POST"])
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    form = UserForm()
+    user_to_update = current_user
+
+    if form.validate_on_submit():
+
+        user_to_update.name = request.form.get("name")
+        user_to_update.username = request.form.get("username")
+        user_to_update.email = request.form.get("email")
+        user_to_update.password = request.form.get("password")
+        user_to_update.password2 = request.form.get("password2")
+
+        try:
+            db.session.commit()
+            flash("3")  # User info updated successfully!
+            return redirect(url_for("dashboard"))
+        except:
+            flash("4")  # Sorry! Something Went Wrong!
+            return render_template("dashboard.html", user=user_to_update, form=form)
+
+    return render_template("dashboard.html", user=user_to_update, form=form)
+
+
+# Error-Handler for Page Not Found Errors.
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+
+# Error-Handler for Internal Server Errors.
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template("500.html"), 500
 
 
 # The code bellow is to run the file directly from IDE
