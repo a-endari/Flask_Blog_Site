@@ -15,6 +15,8 @@ from flask_login import (
     current_user,
 )
 from webforms import UserForm, PostForm, LoginForm, EditUserForm, SearchForm
+from flask_ckeditor import CKEditor
+
 
 load_dotenv()
 
@@ -29,6 +31,9 @@ app = Flask(__name__)
 
 # New mysql Database
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URI")
+
+# Make CKEditor be offline
+app.config["CKEDITOR_SERVE_LOCAL"] = True
 
 # to shut depracation warnnig off!
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = "False"
@@ -50,6 +55,9 @@ login_manager.login_view = (  # type: ignore
     "login"  # This sets the view that is redirected when login required!
 )
 
+# setting up CkEditor for rich text editing
+ckeditor = CKEditor(app)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -67,6 +75,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
+    access_level = db.Column(db.String(20), nullable=False, default="user")
 
     # user's many posts
     posts = db.relationship("Posts", backref="post_author")
@@ -263,7 +272,7 @@ def add_user():
 @app.route("/user-edit/<int:id>/", methods=["GET", "POST"])
 @login_required
 def edit_user(id):
-    if current_user.username == "admin":
+    if current_user.access_level == "admin":
         form = EditUserForm()
         user_to_update = Users.query.get_or_404(id)
         if form.validate_on_submit():
@@ -277,6 +286,7 @@ def edit_user(id):
                 user_to_update.name = request.form.get("name")
                 user_to_update.username = request.form.get("username")
                 user_to_update.email = request.form.get("email")
+                user_to_update.access_level = request.form.get("user_access")
                 # user_to_update.password = request.form.get("password")
                 # user_to_update.password2 = request.form.get("password2")
                 try:
@@ -297,7 +307,7 @@ def edit_user(id):
 @app.route("/users-managemment/")
 @login_required
 def user_management():
-    if current_user.username == "admin":
+    if current_user.access_level == "admin":
         users = Users.query.all()
         return render_template("users_management.html", users=users)
     flash("Log in as an administrator to access this page.")

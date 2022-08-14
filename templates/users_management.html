@@ -36,6 +36,7 @@ Enter your name!
                             <th class="text-center" scope="col">Full Name</th>
                             <th class="text-center" scope="col">Email Address</th>
                             <th class="text-center" scope="col">User Name</th>
+                            <th class="text-center" scope="col">Access Level</th>
                             <th class="text-center" scope="col">Delete</th>
                             <th class="text-center" scope="col">Edit</th>
                         </tr>
@@ -53,6 +54,9 @@ Enter your name!
                         </td>
                         <td class="text-center">
                             {{ user.username }}
+                        </td>
+                        <td class="text-center">
+                            {{ user.access_level }}
                         </td>
 
                         <td class="text-center">

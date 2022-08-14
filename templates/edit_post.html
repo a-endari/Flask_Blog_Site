@@ -40,7 +40,8 @@ Edit Post
         </div>
     </div>
 </form>
-
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='content') }}
 {% else %}
 
 <div class="alert alert-danger alert-dismissible fade show" role="alert">

@@ -23,7 +23,7 @@
         <h6 class="card-title">
             {{ post.title }}
         </h6>
-        <pre class="">{{ post.content}}</pre>
+        <pre class="">{{ post.content | safe}}</pre>
     </div>
     <div class="card-footer spaced-between">
         <small class="text-muted">
@@ -34,7 +34,7 @@
         </small>
     </div>
     <div class="card-footer spaced-end">
-        {% if current_user.username == 'admin' or current_user.username == post.post_author.username %}
+        {% if current_user.access_level == 'admin' or current_user.username == post.post_author.username %}
         <form action="{{ url_for('delete_post') }}" method="POST">
             <input type="hidden" name="id" value="{{post.id}}" />
             <button class="btn btn-sm btn-danger mx-1" type="submit"

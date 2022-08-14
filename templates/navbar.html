@@ -22,7 +22,7 @@
                         Logout
                     </a>
                 </li>
-                {% if current_user.username == 'admin' %}
+                {% if current_user.access_level == 'admin' %}
 
                 <li class="nav-item">
 

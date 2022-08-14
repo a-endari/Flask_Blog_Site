@@ -5,11 +5,13 @@ from wtforms import (
     SubmitField,
     EmailField,
     PasswordField,
+    # RadioField,
+    SelectField,
     # BooleanField,
     # ValidationError,
 )
 from wtforms.validators import DataRequired, Email, EqualTo
-
+from flask_ckeditor import CKEditorField
 
 # Create a Form class for Database
 class UserForm(FlaskForm):
@@ -68,6 +70,17 @@ class EditUserForm(FlaskForm):
         ],
     )
 
+    user_access = SelectField(
+        label="Accsess Level",
+        choices=[
+            "user",
+            "admin",
+        ],
+        validators=[
+            DataRequired("Choose One"),
+        ],
+    )
+
     email = EmailField(
         "Email",
         validators=[
@@ -98,7 +111,7 @@ class PostForm(FlaskForm):
         ],
     )
 
-    content = TextAreaField(
+    content = CKEditorField(
         "Content",
         validators=[
             DataRequired(),

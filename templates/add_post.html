@@ -9,7 +9,6 @@ Create Post
 
 
 {% block content %}
-
 <h1> Enter your info & write your 🐤BlogBird post</h1>
 
 <form class="shadow p-3 mb-5 bg-body rounded" action="{{url_for('add_post')}}" method="POST">
@@ -27,5 +26,7 @@ Create Post
         <div class="text-end">{{ form.submit(class="btn btn-primary") }}</div>
     </div>
 </form>
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='content') }}
 
 {% endblock %}

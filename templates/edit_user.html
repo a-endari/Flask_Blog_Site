@@ -23,17 +23,20 @@ Update user info
     <br>
     {{ form.hidden_tag() }}
     <div class="mb-3">
-        {{ 'Full ' + form.name.label(class="form-label")+ ':' }}
+        {{ 'Full ' + form.name.label(class="form-label") + ':' }}
         {{ form.name(class="form-control mb-3",placeholder="John Doe", value=user.name) }}
     </div>
     <div class="">
-        {{ form.username.label(class="form-label")+ ' Address:' }}
+        {{ form.username.label(class="form-label") + ' Address:' }}
         {{ form.username(class="form-control mb-3", placeholder="Maximum 20 character!", value=user.username) }}
     </div>
     <div class="">
-        {{ form.email.label(class="form-label")+ ' Address:' }}
+        {{ form.email.label(class="form-label") + ' Address:' }}
         {{ form.email(class="form-control mb-3", placeholder="name@example.com", value=user.email) }}
     </div>
+    <br>
+    {{ form.user_access.label(class="") + ':' }}
+    {{ form.user_access(class="form-select", value=user.access_level) }}
     <br>
 
     <div class=" text-end">
