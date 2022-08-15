@@ -1,14 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}
-
-{% if user %}
-Editing {{user.name}}'s Info'
-{% else %}
-Update user info
-{% endif %}
-
-{% endblock %}
+{% block title %}Blogbird{% endblock %}
 
 
 {% block content %}
@@ -33,6 +25,11 @@ Update user info
     <div class="">
         {{ form.email.label(class="form-label") + ' Address:' }}
         {{ form.email(class="form-control mb-3", placeholder="name@example.com", value=user.email) }}
+    </div>
+    <br>
+    <div class="mb-3">
+        {{ form.about.label(class="form-label")+ ':' }}
+        {{ form.about(class="form-control", placeholder="Tell us about yourself.") }}
     </div>
     <br>
     {{ form.user_access.label(class="") + ':' }}

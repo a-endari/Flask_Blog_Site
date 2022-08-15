@@ -1,20 +1,26 @@
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{url_for('index')}}">🐤BlogBird</a>
+        <a class="navbar-brand" href="{{url_for('index')}}"> <img class="mini_profile_pic"
+                src="{{url_for('static', filename='fav.ico')}}" alt="logo"> BlogBird</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 nav-vertical-center">
                 {% if current_user.is_authenticated %}
+                {% if current_user.profile_pic %}
+                <a class="nav-link me-1" href=" {{url_for('dashboard')}}">
 
-                <li class="nav-item">
-                    <a class="nav-link" href=" {{url_for('dashboard')}}">
-                        {{current_user.username}}'s Dashboard
-                    </a>
-                </li>
+                    <img class="mini_profile_pic"
+                        src="{{url_for('static', filename='images/profile_pictures/'+current_user.profile_pic)}}"
+                        alt="Profile Picture">
+                </a>
+                {% else %}
+                <img class="mini_profile_pic" src="{{url_for('static', filename='images/Default_Profile.png')}}"
+                    alt="Defalt Profile Picture">
+                {% endif %}
+
 
                 <li class="nav-item">
 

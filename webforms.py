@@ -9,6 +9,7 @@ from wtforms import (
     SelectField,
     # BooleanField,
     # ValidationError,
+    FileField,
 )
 from wtforms.validators import DataRequired, Email, EqualTo
 from flask_ckeditor import CKEditorField
@@ -68,6 +69,14 @@ class EditUserForm(FlaskForm):
         validators=[
             DataRequired("enter your name"),
         ],
+    )
+
+    profile_pic = FileField(
+        "Profile pic",
+    )
+
+    about = TextAreaField(
+        "About Author",
     )
 
     user_access = SelectField(

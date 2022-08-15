@@ -1,31 +1,39 @@
 {% extends 'base.html' %}
 
-{% block title %}
-
-Dashboard
-
-{% endblock %}
-
+{% block title %}Blogbird{% endblock %}
 
 {% block content %}
 
 <h2>Dashboard</h2>
 <br>
 <div class="card">
+
     <div class="card-header">
         {{current_user.name }}
     </div>
     <div class="card-body">
-        <h5 class="card-title">Dear {{ current_user.name }} wlecome to your user dashboard.</h5>
+        <div class="float-end">
+            {% if current_user.profile_pic %}
+            <img class="profile_pic float-end"
+                src="{{url_for('static', filename='images/profile_pictures/'+current_user.profile_pic)}}"
+                alt="Profile Picture">
+            {% else %}
+            <img class="profile_pic float-end" src="{{url_for('static', filename='images/Default_Profile.png')}}"
+                alt="Defalt Profile Picture">
+            {% endif %}
+        </div>
+        <br>
         <p class="card-text">
             <strong>Name: </strong> {{current_user.name }} <br>
             <strong>User ID: </strong> {{current_user.id }} <br>
             <strong>Username: </strong> {{current_user.username }} <br>
             <strong>Email Address: </strong> {{current_user.email }} <br>
             <strong>Access Level: </strong> {{current_user.access_level }} <br>
-            <strong>Date joined: </strong> {{current_user.date_added }}
+            <strong>Date joined: </strong> {{current_user.date_added }} <br>
+            <strong>About: </strong> {{current_user.about }} <br>
         </p>
     </div>
+
     <div class="card-footer text-end">
         <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
         <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
@@ -45,9 +53,10 @@ Dashboard
     <div class=" card collapse collapse-vertical" id="collapseWidthExample">
         <div class="card-header">Enter your info:</div>
         <div class="card-body">
-            <form class=" bg-body rounded" action="" method="POST">
+            <form class=" bg-body rounded" action="" method="POST" enctype="multipart/form-data">
                 <br>
                 {{ form.hidden_tag() }}
+                <input type="hidden" , name="user_access" , value="{{current_user.access_level}}">
                 <div class="card-text">
                     <div class="mb-3">
                         {{ 'Full ' + form.name.label(class="form-label")+ ':' }}
@@ -62,16 +71,16 @@ Dashboard
                         {{ form.email.label(class="form-label")+ ' Address:' }}
                         {{ form.email(class="form-control", placeholder="name@example.com", value=user.email) }}
                     </div>
-                    <br>
                     <div class="mb-3">
-                        {{ 'New or old ' + form.password.label(class="form-label")+ ':' }}
-                        {{ form.password(class="form-control") }}
+                        {{ form.about.label(class="form-label")+ ':' }}
+                        {{ form.about(class="form-control", placeholder="Tell us about yourself.") }}
                     </div>
-                    <br />
+
                     <div class="mb-3">
-                        {{ form.password2.label(class="form-label")+ ':' }}
-                        {{ form.password2(class="form-control") }}
+                        {{ form.profile_pic.label(class="form-label")+ ':' }}
+                        {{ form.profile_pic(class="form-control",) }}
                     </div>
+
                     <div class=" text-end">
                         <a class="btn btn btn-outline-danger" href="{{url_for('delete_user', id=user.id)}}">Delete</a>
                         {{ form.submit(class="btn btn-outline-primary") }}

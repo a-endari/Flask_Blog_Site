@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}
-
-🐤BlogBird
-
-{% endblock %}
+{% block title %}Blogbird{% endblock %}
 
 
 {%block content%}
@@ -39,6 +35,20 @@
         <small class="text-muted">
             Date: {{post.date_posted.strftime("%Y-%m-%d")}}
         </small>
+    </div>
+    <div class="card-footer">
+        <div class="float-start me-3 mt-2 ">
+            {% if post.post_author.profile_pic %}
+            <img class="mini_profile_pic float-end"
+                src="{{url_for('static', filename='images/profile_pictures/'+post.post_author.profile_pic)}}"
+                alt="Profile Picture">
+            {% else %}
+            <img class="mini_profile_pic float-end" src="{{url_for('static', filename='images/Default_Profile.png')}}"
+                alt="Defalt Profile Picture">
+            {% endif %}
+        </div>
+        <strong> About {{post.post_author.name}}:</strong><br>
+        {{post.post_author.about}}
     </div>
     {% if current_user.access_level == 'admin' or current_user.username == post.post_author.username %}
     <div class="card-footer spaced-between">

@@ -6,6 +6,8 @@ from flask import Flask, render_template, flash, request, redirect, url_for, abo
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import uuid as uuid
 from flask_login import (
     LoginManager,
     UserMixin,
@@ -26,6 +28,7 @@ app = Flask(__name__)
 
 # Adding Database location to app.config
 
+
 # old SQlite DataBase - used at first
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
 
@@ -42,6 +45,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = "False"
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 # Initialize The Database from app! whitg the provided config files!
+# which provides "SQLALCHEMY_DATABASE_URI"
 db = SQLAlchemy(app)
 
 # This below is for Flask-Migrate stuff and makes that possible!
@@ -67,11 +71,15 @@ def load_user(user_id):
 # Create database Model
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+
+    profile_pic = db.Column(db.String(255), nullable=False)
+
     username = db.Column(db.String(20), nullable=False, unique=True)
     name = db.Column(
         db.String(100),
         nullable=False,
     )
+    about = db.Column(db.Text(600))
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
@@ -244,10 +252,15 @@ def add_user():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
             # Hashing password
+            if form.username.data == "admin":
+                access_level = "admin"
+            else:
+                access_level = "user"
             user = Users(
                 name=form.name.data,
                 username=form.username.data,
                 email=form.email.data,
+                access_level=access_level,
                 password=form.password.data,
             )
             db.session.add(user)
@@ -275,6 +288,7 @@ def edit_user(id):
     if current_user.access_level == "admin":
         form = EditUserForm()
         user_to_update = Users.query.get_or_404(id)
+        form.about.data = user_to_update.about
         if form.validate_on_submit():
             previous_user = Users.query.filter_by(
                 username=request.form.get("username")
@@ -286,6 +300,7 @@ def edit_user(id):
                 user_to_update.name = request.form.get("name")
                 user_to_update.username = request.form.get("username")
                 user_to_update.email = request.form.get("email")
+                user_to_update.about = request.form.get("about")
                 user_to_update.access_level = request.form.get("user_access")
                 # user_to_update.password = request.form.get("password")
                 # user_to_update.password2 = request.form.get("password2")
@@ -367,17 +382,27 @@ def logout():
 @app.route("/dashboard/", methods=["GET", "POST"])
 @login_required
 def dashboard():
-    form = UserForm()
+    form = EditUserForm()
     user_to_update = current_user
-
+    form.about.data = user_to_update.about
     if form.validate_on_submit():
 
         user_to_update.name = request.form.get("name")
         user_to_update.username = request.form.get("username")
         user_to_update.email = request.form.get("email")
-        user_to_update.password = request.form.get("password")
-        user_to_update.password2 = request.form.get("password2")
+        user_to_update.access_level = request.form.get("user_access")
+        user_to_update.about = request.form.get("about")
 
+        if request.files["profile_pic"]:
+            # profile pic stuff
+            user_profile_pic = request.files["profile_pic"]
+            secure_profile_pic_name = secure_filename(user_profile_pic.filename)
+            # Set UUID
+            pic_uuid_name = str(uuid.uuid1()) + "_" + secure_profile_pic_name
+            user_profile_pic.save(
+                os.path.join("static/images/profile_pictures", pic_uuid_name)
+            )
+            user_to_update.profile_pic = pic_uuid_name
         try:
             db.session.commit()
             flash("3")  # User info updated successfully!
