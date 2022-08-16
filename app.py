@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-from dotenv import load_dotenv
 from flask import Flask, render_template, flash, request, redirect, url_for, abort
 
 from flask_sqlalchemy import SQLAlchemy
@@ -19,30 +18,11 @@ from flask_login import (
 from webforms import UserForm, PostForm, LoginForm, EditUserForm, SearchForm
 from flask_ckeditor import CKEditor
 
-
-load_dotenv()
-
-
 # Create a Flask instance
 app = Flask(__name__)
 
-# Adding Database location to app.config
-
-
-# old SQlite DataBase - used at first
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
-
-# New mysql Database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URI")
-
-# Make CKEditor be offline
-app.config["CKEDITOR_SERVE_LOCAL"] = True
-
-# to shut depracation warnnig off!
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = "False"
-
-# Secret Key - needed for WTF or SQLALCHEMY
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+# Importing app configs from config.py
+app.config.from_object("config.Config")
 
 # Initialize The Database from app! whitg the provided config files!
 # which provides "SQLALCHEMY_DATABASE_URI"
@@ -400,7 +380,7 @@ def dashboard():
             # Set UUID
             pic_uuid_name = str(uuid.uuid1()) + "_" + secure_profile_pic_name
             user_profile_pic.save(
-                os.path.join("static/images/profile_pictures", pic_uuid_name)
+                os.path.join(app.config["PIC_UPLOAD_FOLDER"], pic_uuid_name)
             )
             user_to_update.profile_pic = pic_uuid_name
         try:
@@ -425,7 +405,7 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template("500.html"), 500
 
-
+#TODO:
 # The code bellow is to run the file directly from IDE
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
