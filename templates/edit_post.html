@@ -5,7 +5,7 @@
 
 
 {% block content %}
-{% if current_user.username == 'admin' or current_user.username == post.post_author.username %}
+{% if current_user.access_level == 'admin' or current_user.username == post.post_author.username %}
 
 <div class="spaced-between">
     <h1> Enter your info & write your 🐤BlogBird post</h1>

@@ -1,3 +1,7 @@
+#! C:\Users\Abbas\Dropbox\MyProjects\codemy_flask\FLSK_Virt_Env\Scripts\python
+# FIXME:
+# Delete line above when pushing to production.
+# It is for Coderunner extension to work in output
 import os
 from datetime import datetime
 from flask import Flask, render_template, flash, request, redirect, url_for, abort
@@ -101,6 +105,7 @@ class Posts(db.Model):
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+# ROUTES SECTION:
 # Create a route decorator for index
 @app.route("/")
 @app.route("/index/")
@@ -134,7 +139,8 @@ def search():
 def posts():
     posts = Posts.query.order_by(
         Posts.date_posted.desc()
-    )  # .desc() at the end is just like .title() added to a string!! it only reversez the order.
+    )  # .desc() at the end is just like
+    # .title() added to a string!! it only reversez the order.
     return render_template("posts.html", posts=posts)
 
 
@@ -171,7 +177,7 @@ def add_post():
 # Route for a individual blog post
 @app.route("/<string:author>/<string:slug>/")
 def post(author, slug):
-    post = Posts.query.filter_by(slug=slug, author=author).first()
+    post = Posts.query.filter_by(slug=slug, id=author).first()
     if post:
         return render_template("post.html", post=post)
     return abort(404)
@@ -201,7 +207,7 @@ def edit_post():
             return render_template("edit_post.html", form=form, post=post)
 
 
-# Delete endpoint for posts
+# Endpoint for post deletion.
 @app.route("/delete_post/", methods=["POST"])
 @login_required
 def delete_post():
@@ -223,7 +229,7 @@ def delete_post():
     return redirect(url_for("posts"))
 
 
-# Route view sers list and add new users
+# Route view to add new users
 @app.route("/new_user/", methods=["GET", "POST"])
 def add_user():
     form = UserForm()
@@ -231,7 +237,7 @@ def add_user():
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
-            # Hashing password
+            # seting accsess level for admin
             if form.username.data == "admin":
                 access_level = "admin"
             else:
@@ -245,7 +251,7 @@ def add_user():
             )
             db.session.add(user)
             db.session.commit()
-            flash("2")
+            flash("2")  # User successfully added!
             name = form.name.data
             form.name.data = ""
             form.username.data = ""
@@ -258,6 +264,7 @@ def add_user():
             )
         else:
             flash("1")
+            # User's email is already in databas!, Use another Email!
     return render_template("user_register.html", name=name, form=form)
 
 
@@ -394,6 +401,7 @@ def dashboard():
     return render_template("dashboard.html", user=user_to_update, form=form)
 
 
+# ERROR HANDLING
 # Error-Handler for Page Not Found Errors.
 @app.errorhandler(404)
 def page_not_found(e):
@@ -405,7 +413,8 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template("500.html"), 500
 
-#TODO:
+
+# FIXME:
 # The code bellow is to run the file directly from IDE
 if __name__ == "__main__":
     app.run()

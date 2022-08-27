@@ -13,7 +13,7 @@
 <div class="post card shadow-lg text-bg-light mb-3 mx-auto">
     <div class="card-header  spaced-between">
         <span>This is a 🐤BlogBird Post</span>
-        <a class="btn btn-sm btn-secondary" href="{{url_for('post', author=post.author, slug=post.slug)}}">
+        <a class="btn btn-sm btn-secondary" href="{{url_for('post', author=post.id, slug=post.slug)}}">
             Read Full Post
         </a>
     </div>
@@ -23,7 +23,7 @@
         </h6>
         <p class="card-text">
             {{ post.content | safe |truncate(300, True, "... ") }}
-            <a class="link-secondary" href="{{url_for('post', author=post.author, slug=post.slug)}}">
+            <a class="link-secondary" href="{{url_for('post', author=post.id, slug=post.slug)}}">
                 read more
             </a>
         </p>
